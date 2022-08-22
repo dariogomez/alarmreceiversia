@@ -17,7 +17,7 @@ else:
     adbPath = "/opt/adb"
     
 #LOG_PATH="/var/log/alarmReceiver.log"
-LOG_PATH="alarmReceiver.log"
+LOG_PATH="log/alarmReceiver.log"
 logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
 
 fileHandler = logging.FileHandler(LOG_PATH)
@@ -49,7 +49,7 @@ class AlarmTCPHandler(socketserver.BaseRequestHandler):
         if "NULL" in line:
             print("NULL")
             return
-            
+
         logging.info("Message Received:".format(self.client_address[0]))
         logging.info(line)
         try:
