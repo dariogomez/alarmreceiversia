@@ -18,9 +18,9 @@ from email.mime.text import MIMEText
 DISABLE_ANDROID_CMDS=True
 DISABLE_SMS=False
 
-DISINSERIMENTO = 0
-INSERIMENTO_TOTALE = 1
-INSERIMENTO_PARZIALE = 2
+DISARM = 0
+TOTAL_ARM = 1
+PARTIAL_ARM = 2
 
 class Config:
     config=None
@@ -156,7 +156,7 @@ class AlarmManager:
             return
     
     def inserimentoTotale(self, subject, message, param):
-        self.alarmActive = INSERIMENTO_TOTALE
+        self.alarmActive = TOTAL_ARM
 
         for command in Config.getArray('pi_commands_on_arm'):
             AlarmManager.callPiServer(command)
@@ -173,7 +173,7 @@ class AlarmManager:
         time.sleep(1)
        
     def inserimentoParziale(self, subject, message, param):
-        self.alarmActive = INSERIMENTO_PARZIALE
+        self.alarmActive = PARTIAL_ARM
         
         AlarmManager.sendTelegramMessage(subject)
     
@@ -184,11 +184,11 @@ class AlarmManager:
             if len(greets) >= iParam:
                 self.callTaskerTask("Pronuncia", greets[iParam-1])
 
-        if self.alarmActive==INSERIMENTO_TOTALE: 
+        if self.alarmActive==TOTAL_ARM: 
             for command in Config.getArray('pi_commands_on_disarm'):
                 AlarmManager.callPiServer(command)
              
-        self.alarmActive = DISINSERIMENTO    
+        self.alarmActive = DISARM    
     
         AlarmManager.sendTelegramMessage(subject)
         self.callTaskerTask("Attiva_Aereo")

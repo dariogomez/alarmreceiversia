@@ -4,6 +4,7 @@
 import sys
 from alarmManager import Config
 from alarmManager import AlarmManager
+from sendTo import parse_line
 import socketserver
 from datetime import datetime
 import time
@@ -15,7 +16,8 @@ if len(sys.argv) > 1 and sys.argv[1] == "1":
 else:
     adbPath = "/opt/adb"
     
-LOG_PATH="/var/log/alarmReceiver.log"
+#LOG_PATH="/var/log/alarmReceiver.log"
+LOG_PATH="alarmReceiver.log"
 logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
 
 fileHandler = logging.FileHandler(LOG_PATH)
@@ -44,13 +46,17 @@ class AlarmTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         # self.request is the TCP socket connected to the client
         line = self.request.recv(1024).strip().decode('ascii')
-        logging.info("Ricevuto messaggio:".format(self.client_address[0]))
+        if "NULL" in line:
+            print("NULL")
+            return
+            
+        logging.info("Message Received:".format(self.client_address[0]))
         logging.info(line)
         try:
             pos = line.index(ID_STRING)
             inputMessage=line[pos:]
             if line[0:4] != AlarmTCPHandler.CRCCalc(inputMessage):
-                #raise Exception("CRC errato!")
+                #raise Exception("CRC incorrecto!")
                 # Anche se da specifiche dovremmo ignorare il messaggio mandiamo un NAK così l'allarme ripete!
                 timestamp = datetime.fromtimestamp(time.time()).strftime('_%H:%M:%S,%m-%d-%Y')
                 response = '"NAK"0000L0R0A0[]' + timestamp
@@ -64,13 +70,15 @@ class AlarmTCPHandler(socketserver.BaseRequestHandler):
             # ... ma noi facciamo le cose per bene
             CRC = AlarmTCPHandler.CRCCalc(response)
             response="\n" + CRC + header + response + "\r"
-            logging.info("Rispondo: " + response)
+            logging.info("Response: " + response)
             self.request.sendall(response.encode('ascii'))
+
+            parse_line(line)
 
             t = threading.Thread(target=alarmManager.manageAlarmMessage, args=[inputMessage])
             t.start()
         except Exception as inst:
-            logging.info("Errore: " + str(inst) + "\nMessaggio ignorato")
+            logging.info("Error: " + str(inst) + "\Ignored message")
     
     @staticmethod
     def CRCCalc(msg):
