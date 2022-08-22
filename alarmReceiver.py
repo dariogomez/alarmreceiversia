@@ -16,8 +16,8 @@ if len(sys.argv) > 1 and sys.argv[1] == "1":
 else:
     adbPath = "/opt/adb"
     
-#LOG_PATH="/var/log/alarmReceiver.log"
-LOG_PATH="log/alarmReceiver.log"
+LOG_PATH="/var/log/alarmreceiversia/alarmReceiver.log"
+#LOG_PATH="log/alarmReceiver.log"
 logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
 
 fileHandler = logging.FileHandler(LOG_PATH)
