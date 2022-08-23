@@ -16,11 +16,8 @@ def parse_line(payload: str):
     split_payload = payload.split('"')
     payload_end = split_payload[2]
     event_date = payload_end.split('_')[1]
-#    print("event_date: {}".format(event_date))
     message_block = re.findall(r'\[(.*?)\]', payload_end)[0]
-    print(message_block)
     res = parse_adc_cid_message(message_block, event_date)
-#    print(res)
 
     if Config.get('post_send'):
         send_post_sia_event(res)
