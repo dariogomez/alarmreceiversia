@@ -16,8 +16,8 @@ if len(sys.argv) > 1 and sys.argv[1] == "1":
 else:
     adbPath = "/opt/adb"
     
-LOG_PATH="/var/log/alarmreceiversia/alarmReceiver.log"
-#LOG_PATH="log/alarmReceiver.log"
+#LOG_PATH="/var/log/alarmreceiversia/alarmReceiver.log"
+LOG_PATH="log/alarmReceiver.log"
 logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
 
 fileHandler = logging.FileHandler(LOG_PATH)
@@ -50,8 +50,8 @@ class AlarmTCPHandler(socketserver.BaseRequestHandler):
             print("NULL")
             return
 
-        logging.info("Message Received:".format(self.client_address[0]))
-        logging.info(line)
+#        logging.info("Message Received:".format(self.client_address[0]))
+#        logging.info(line)
         try:
             pos = line.index(ID_STRING)
             inputMessage=line[pos:]
